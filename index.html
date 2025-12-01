@@ -159,6 +159,29 @@ function updateUI(lines) {
 }
 
 loadPatchList();
+// FIX: remover 'avaliarQualidade(totalArquivos);' solto
+
+function avaliarQualidade(qtd) {
+    let status = '';
+    let msg = '';
+    let cor = '';
+
+    if (qtd <= 100) { status = 'Excelente'; msg = 'Atualização leve e saudável!'; cor = '#00ff66'; }
+    else if (qtd <= 300) { status = 'Regular'; msg = 'Atualização mediana.'; cor = '#aaff00'; }
+    else if (qtd <= 500) { status = 'Atenção'; msg = 'Muitos arquivos!'; cor = '#ffaa00'; }
+    else if (qtd <= 800) { status = 'Ruim'; msg = 'Atualização muito pesada.'; cor = '#ff5500'; }
+    else { status = 'Péssimo'; msg = 'Recomenda-se cliente novo!'; cor = '#ff0033'; }
+
+    const q = document.getElementById('qualidadeUpdate');
+    q.textContent = status;
+    q.style.color = cor;
+
+    const m = document.getElementById('mensagemQualidade');
+    m.textContent = msg;
+    m.style.color = cor;
+}
+
+carregarLista();
 </script>
 </body>
 </html>
