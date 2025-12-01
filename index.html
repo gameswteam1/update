@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GamesWTeam - Atualizações</title>
+
 <style>
     body {
         background-color: #0d0d0d;
@@ -62,21 +63,25 @@
     }
 </style>
 </head>
+
 <body>
+
 <header>
     <img src="https://i.imgur.com/FZAhV5D.png" alt="GamesWTeam Logo">
     <h1>GamesWTeam - Lista de Atualizações</h1>
 </header>
+
 <div class="container">
+
     <div class="info-box">
         <div><span class="label">Total de Arquivos:</span> <span id="totalArquivos">...</span></div>
         <div><span class="label">Tamanho Total:</span> <span id="tamanhoTotal">...</span></div>
+    </div>
 
     <div class="info-box">
         <div><span class="label">Qualidade do Update:</span> <span id="qualidadeUpdate">...</span></div>
         <div id="mensagemQualidade" style="margin-top:5px; color:#aaa;"></div>
     </div>
-</div>
 
     <table>
         <thead>
@@ -88,6 +93,7 @@
         </thead>
         <tbody id="lista"></tbody>
     </table>
+
 </div>
 
 <script>
@@ -122,6 +128,9 @@ async function carregarLista() {
         document.getElementById('totalArquivos').textContent = totalArquivos;
         document.getElementById('tamanhoTotal').textContent = formatarTamanho(tamanhoTotal);
 
+        // Avaliar qualidade
+        avaliarQualidade(totalArquivos);
+
     } catch (err) {
         console.error('Erro ao carregar lista:', err);
     }
@@ -137,22 +146,29 @@ function formatarTamanho(bytes) {
     return bytes.toFixed(2) + ' ' + unidades[i];
 }
 
-avaliarQualidade(totalArquivos);
-}
-
 function avaliarQualidade(qtd) {
     let status = '';
     let msg = '';
+
     if (qtd <= 100) {
-        status = 'Excelente'; msg = 'Atualização leve e totalmente saudável!';
-    } else if (qtd <= 300) {
-        status = 'Regular'; msg = 'Atualização mediana, dentro do esperado.';
-    } else if (qtd <= 500) {
-        status = 'Atenção'; msg = 'Muitos arquivos! Considere otimizar.';
-    } else if (qtd <= 800) {
-        status = 'Ruim'; msg = 'Atualização pesada demais. Risco de problemas.';
-    } else {
-        status = 'Péssimo'; msg = 'Recomendado urgentemente gerar um cliente novo!';
+        status = 'Excelente';
+        msg = 'Atualização leve e totalmente saudável!';
+    }
+    else if (qtd <= 300) {
+        status = 'Regular';
+        msg = 'Atualização mediana, dentro do esperado.';
+    }
+    else if (qtd <= 500) {
+        status = 'Atenção';
+        msg = 'Muitos arquivos! Considere otimizar.';
+    }
+    else if (qtd <= 800) {
+        status = 'Ruim';
+        msg = 'Atualização pesada demais. Risco de problemas.';
+    }
+    else {
+        status = 'Péssimo';
+        msg = 'Recomendado urgentemente gerar um cliente novo!';
     }
 
     document.getElementById('qualidadeUpdate').textContent = status;
@@ -161,5 +177,6 @@ function avaliarQualidade(qtd) {
 
 carregarLista();
 </script>
+
 </body>
 </html>
