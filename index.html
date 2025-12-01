@@ -1,9 +1,138 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-    <title>Minha Página</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GamesWTeam - Atualizações</title>
+<style>
+    body {
+        background-color: #0d0d0d;
+        color: #e0e0e0;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    header {
+        text-align: center;
+        padding: 20px 0;
+        border-bottom: 1px solid #1f1f1f;
+    }
+    header img {
+        height: 80px;
+    }
+    h1 {
+        margin-top: 10px;
+        color: #00ff66;
+        font-size: 28px;
+    }
+    .container {
+        width: 90%;
+        max-width: 900px;
+        margin: 30px auto;
+        background: #111;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px #000;
+    }
+    .info-box {
+        background: #0f0f0f;
+        padding: 15px;
+        border-left: 4px solid #00ff66;
+        margin-bottom: 20px;
+        border-radius: 6px;
+    }
+    .label {
+        color: #00ff66;
+        font-weight: bold;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+    th, td {
+        padding: 10px;
+        border-bottom: 1px solid #1f1f1f;
+        text-align: left;
+    }
+    th {
+        color: #00ff66;
+        font-size: 14px;
+        text-transform: uppercase;
+    }
+</style>
 </head>
 <body>
-    <h1>Olá! Esta página veio do GitHub Pages.</h1>
+<header>
+    <img src="https://i.imgur.com/FZAhV5D.png" alt="GamesWTeam Logo">
+    <h1>GamesWTeam - Lista de Atualizações</h1>
+</header>
+<div class="container">
+    <div class="info-box">
+        <div><span class="label">Total de Arquivos:</span> <span id="totalArquivos">...</span></div>
+        <div><span class="label">Tamanho Total:</span> <span id="tamanhoTotal">...</span></div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Arquivo</th>
+                <th>Hash</th>
+                <th>Tamanho</th>
+            </tr>
+        </thead>
+        <tbody id="lista"></tbody>
+    </table>
+</div>
+
+<script>
+async function carregarLista() {
+    try {
+        const response = await fetch('ListaPatch.txt');
+        const text = await response.text();
+        const linhas = text.trim().split(/\r?\n/);
+
+        let totalArquivos = linhas.length;
+        let tamanhoTotal = 0;
+
+        const tbody = document.getElementById('lista');
+        tbody.innerHTML = '';
+
+        linhas.forEach(linha => {
+            const partes = linha.split(' ');
+            const nome = partes[0];
+            const hash = partes[1];
+            const tamanho = parseInt(partes[2]);
+            tamanhoTotal += tamanho;
+
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${nome}</td>
+                <td>${hash}</td>
+                <td>${formatarTamanho(tamanho)}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        document.getElementById('totalArquivos').textContent = totalArquivos;
+        document.getElementById('tamanhoTotal').textContent = formatarTamanho(tamanhoTotal);
+
+    } catch (err) {
+        console.error('Erro ao carregar lista:', err);
+    }
+}
+
+function formatarTamanho(bytes) {
+    const unidades = ['B', 'KB', 'MB', 'GB'];
+    let i = 0;
+    while (bytes >= 1024 && i < unidades.length - 1) {
+        bytes /= 1024;
+        i++;
+    }
+    return bytes.toFixed(2) + ' ' + unidades[i];
+}
+
+carregarLista();
+</script>
 </body>
 </html>
