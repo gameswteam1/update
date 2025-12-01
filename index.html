@@ -71,7 +71,12 @@
     <div class="info-box">
         <div><span class="label">Total de Arquivos:</span> <span id="totalArquivos">...</span></div>
         <div><span class="label">Tamanho Total:</span> <span id="tamanhoTotal">...</span></div>
+
+    <div class="info-box">
+        <div><span class="label">Qualidade do Update:</span> <span id="qualidadeUpdate">...</span></div>
+        <div id="mensagemQualidade" style="margin-top:5px; color:#aaa;"></div>
     </div>
+</div>
 
     <table>
         <thead>
@@ -130,6 +135,28 @@ function formatarTamanho(bytes) {
         i++;
     }
     return bytes.toFixed(2) + ' ' + unidades[i];
+}
+
+avaliarQualidade(totalArquivos);
+}
+
+function avaliarQualidade(qtd) {
+    let status = '';
+    let msg = '';
+    if (qtd <= 100) {
+        status = 'Excelente'; msg = 'Atualização leve e totalmente saudável!';
+    } else if (qtd <= 300) {
+        status = 'Regular'; msg = 'Atualização mediana, dentro do esperado.';
+    } else if (qtd <= 500) {
+        status = 'Atenção'; msg = 'Muitos arquivos! Considere otimizar.';
+    } else if (qtd <= 800) {
+        status = 'Ruim'; msg = 'Atualização pesada demais. Risco de problemas.';
+    } else {
+        status = 'Péssimo'; msg = 'Recomendado urgentemente gerar um cliente novo!';
+    }
+
+    document.getElementById('qualidadeUpdate').textContent = status;
+    document.getElementById('mensagemQualidade').textContent = msg;
 }
 
 carregarLista();
