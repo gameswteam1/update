@@ -4,84 +4,79 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>GamesWTeam - Atualizações</title>
-
 <style>
     body {
-        background-color: #0d0d0d;
-        color: #e0e0e0;
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-    }
-    header {
-        text-align: center;
-        padding: 20px 0;
-        border-bottom: 1px solid #1f1f1f;
-    }
-    header img {
-        height: 80px;
-    }
-    h1 {
-        margin-top: 10px;
-        color: #00ff66;
-        font-size: 28px;
-    }
-    .container {
-        width: 90%;
-        max-width: 900px;
-        margin: 30px auto;
-        background: #111;
+        background: #0f0f17;
+        color: #d4d4d4;
+        font-family: "Segoe UI", sans-serif;
         padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 0 10px #000;
     }
-    .info-box {
-        background: #0f0f0f;
+
+    h1 {
+        text-align: center;
+        color: #76ff7a;
+        margin-bottom: 25px;
+    }
+
+    .panel {
+        background: #14141f;
+        border: 1px solid #2a2a38;
+        padding: 20px;
+        border-radius: 12px;
+        max-width: 900px;
+        margin: auto;
+        box-shadow: 0 0 12px #00000055;
+    }
+
+    .green { color: #76ff7a; }
+    .yellow { color: #ffe56d; }
+    .orange { color: #ffb86c; }
+    .red { color: #ff6b6b; }
+    .purple { color: #c679ff; }
+
+    .quality-box {
         padding: 15px;
-        border-left: 4px solid #00ff66;
-        margin-bottom: 20px;
-        border-radius: 6px;
-    }
-    .label {
-        color: #00ff66;
-        font-weight: bold;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
+        border-radius: 8px;
         margin-top: 20px;
+        font-weight: bold;
+        text-align: center;
+        font-size: 1.2rem;
+        border: 1px solid #2d2d3a;
     }
-    th, td {
-        padding: 10px;
-        border-bottom: 1px solid #1f1f1f;
-        text-align: left;
+
+    .file-list {
+        background: #191926;
+        border: 1px solid #2e2e40;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+        max-height: 300px;
+        overflow-y: auto;
+        font-size: 0.95rem;
     }
-    th {
-        color: #00ff66;
-        font-size: 14px;
-        text-transform: uppercase;
+
+    .file-item {
+        padding: 6px 0;
+        margin-bottom: 4px;
+        border-bottom: 1px solid #2e2e40;
     }
 </style>
 </head>
-
 <body>
-
 <header>
     <img src="https://i.imgur.com/FZAhV5D.png" alt="GamesWTeam Logo">
     <h1>GamesWTeam - Lista de Atualizações</h1>
 </header>
-
 <div class="container">
-
     <div class="info-box">
         <div><span class="label">Total de Arquivos:</span> <span id="totalArquivos">...</span></div>
         <div><span class="label">Tamanho Total:</span> <span id="tamanhoTotal">...</span></div>
-    </div>
 
     <div class="info-box">
         <div><span class="label">Qualidade do Update:</span> <span id="qualidadeUpdate">...</span></div>
         <div id="mensagemQualidade" style="margin-top:5px; color:#aaa;"></div>
     </div>
+</div>
 
     <table>
         <thead>
@@ -93,90 +88,77 @@
         </thead>
         <tbody id="lista"></tbody>
     </table>
-
 </div>
 
 <script>
-async function carregarLista() {
+async function loadPatchList() {
+    const fileUrl = "ListaPatch.txt";
+
     try {
-        const response = await fetch('ListaPatch.txt');
+        const response = await fetch(fileUrl);
+
+        if (!response.ok) {
+            updateUI([], 0);
+            return;
+        }
+
         const text = await response.text();
-        const linhas = text.trim().split(/\r?\n/);
-
-        let totalArquivos = linhas.length;
-        let tamanhoTotal = 0;
-
-        const tbody = document.getElementById('lista');
-        tbody.innerHTML = '';
-
-        linhas.forEach(linha => {
-            const partes = linha.split(' ');
-            const nome = partes[0];
-            const hash = partes[1];
-            const tamanho = parseInt(partes[2]);
-            tamanhoTotal += tamanho;
-
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${nome}</td>
-                <td>${hash}</td>
-                <td>${formatarTamanho(tamanho)}</td>
-            `;
-            tbody.appendChild(tr);
-        });
-
-        document.getElementById('totalArquivos').textContent = totalArquivos;
-        document.getElementById('tamanhoTotal').textContent = formatarTamanho(tamanhoTotal);
-
-        // Avaliar qualidade
-        avaliarQualidade(totalArquivos);
-
-    } catch (err) {
-        console.error('Erro ao carregar lista:', err);
+        const lines = text.trim().length ? text.trim().split(/
+?
+/) : [];
+        updateUI(lines);
+    } catch (e) {
+        updateUI([], 0);
     }
 }
 
-function formatarTamanho(bytes) {
-    const unidades = ['B', 'KB', 'MB', 'GB'];
-    let i = 0;
-    while (bytes >= 1024 && i < unidades.length - 1) {
-        bytes /= 1024;
-        i++;
+function updateUI(lines) {
+    const listDiv = document.getElementById("fileList");
+    const totalCountDiv = document.getElementById("totalCount");
+    const totalSizeDiv = document.getElementById("totalSize");
+    const qualityDiv = document.getElementById("qualityBox");
+
+    listDiv.innerHTML = "";
+
+    if (!lines || lines.length === 0) {
+        totalCountDiv.textContent = "0 arquivos";
+        totalSizeDiv.textContent = "0 bytes";
+        qualityDiv.textContent = "Nenhum update detectado";
+        qualityDiv.className = "quality-box purple";
+        return;
     }
-    return bytes.toFixed(2) + ' ' + unidades[i];
+
+    let totalSize = 0;
+
+    lines.forEach(line => {
+        const [name, hash, size] = line.split(" ");
+        const sizeNum = parseInt(size) || 0;
+        totalSize += sizeNum;
+
+        const item = document.createElement("div");
+        item.className = "file-item";
+        item.innerHTML = `<span class='green'>${name}</span> — ${sizeNum.toLocaleString()} bytes`;
+        listDiv.appendChild(item);
+    });
+
+    totalCountDiv.textContent = `${lines.length} arquivos`;
+    totalSizeDiv.textContent = `${totalSize.toLocaleString()} bytes`;
+
+    // qualidade
+    let quality = "";
+    let color = "";
+
+    if (lines.length <= 100) { quality = "Excelente"; color = "green"; }
+    else if (lines.length <= 300) { quality = "Regular"; color = "yellow"; }
+    else if (lines.length <= 500) { quality = "Atenção"; color = "orange"; }
+    else if (lines.length <= 800) { quality = "Ruim"; color = "red"; }
+    else { quality = "Péssimo — Recomenda-se urgentemente baixar um novo cliente"; color = "purple"; }
+
+    qualityDiv.textContent = `Qualidade do Update: ${quality}`;
+    qualityDiv.className = `quality-box ${color}`;
 }
 
-function avaliarQualidade(qtd) {
-    let status = '';
-    let msg = '';
-
-    if (qtd <= 100) {
-        status = 'Excelente';
-        msg = 'Atualização leve e totalmente saudável!';
-    }
-    else if (qtd <= 300) {
-        status = 'Regular';
-        msg = 'Atualização mediana, dentro do esperado.';
-    }
-    else if (qtd <= 500) {
-        status = 'Atenção';
-        msg = 'Muitos arquivos! Considere otimizar.';
-    }
-    else if (qtd <= 800) {
-        status = 'Ruim';
-        msg = 'Atualização pesada demais. Risco de problemas.';
-    }
-    else {
-        status = 'Péssimo';
-        msg = 'Recomendado urgentemente gerar um cliente novo!';
-    }
-
-    document.getElementById('qualidadeUpdate').textContent = status;
-    document.getElementById('mensagemQualidade').textContent = msg;
-}
-
-carregarLista();
+loadPatchList();
 </script>
-
 </body>
 </html>
