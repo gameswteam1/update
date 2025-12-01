@@ -285,4 +285,4 @@ Data/Local/Spn/ImgsMapName/pkfield.OZT 112cce51 59808
 Data/Local/Spn/ImgsMapName/santatown.OZT 080c7322 59808
 Data/Local/Spn/ImgsMapName/stadium.OZT 067f51bf 59808
 Data/Local/Spn/ImgsMapName/SwampOfCalmness.OZT f04fba9d 59808
-Data/Local/Spn/ImgsMapName/tar can.OZT e9ec9d5c 59808
+Data/Local/Spn/ImgsMapName/tar_can.OZT e9ec9d5c 59808
